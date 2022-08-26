@@ -37,3 +37,10 @@ def get_transactions_summary(transactions: List[Transaction]) -> Dict:
         summary[period]["debit_average"] = get_average_value(debits_transactions)
 
     return summary
+
+
+def transform_csv_object_to_transactions(csv_object: Any) -> List[Transaction]:
+    data = csv_object['Body'].read().decode("utf-8").splitlines()
+    records = csv.reader(data)
+    next(records)
+    return list(map(transaction_parser, records))
