@@ -1,4 +1,6 @@
-from typing import List, Dict
+import csv
+from typing import List, Dict, Any
+
 from app.ReportGenerator.transaction import Transaction
 
 
@@ -24,17 +26,23 @@ def get_total_balance(transactions: List[Transaction]) -> float:
 def get_transactions_summary(transactions: List[Transaction]) -> Dict:
     summary = dict()
     summary["balance"] = get_total_balance(transactions)
+    summary["monthly_summary"] = []
     periods = set([txn.month for txn in transactions])
     for period in periods:
         period_transactions = list(filter(lambda x: x.month == period, transactions))
 
-        summary[period]["transactions_count"] = len(period_transactions)
+        tmp_monthly_summary = dict()
+        tmp_monthly_summary["period"] = period
+
+        tmp_monthly_summary["transactions_count"] = len(period_transactions)
 
         credit_transactions = list(filter(lambda x: x.type == "credit", period_transactions))
-        summary[period]["credit_average"] = get_average_value(credit_transactions)
+        tmp_monthly_summary["credit_average"] = get_average_value(credit_transactions)
 
         debits_transactions = list(filter(lambda x: x.type == "debit", period_transactions))
-        summary[period]["debit_average"] = get_average_value(debits_transactions)
+        tmp_monthly_summary["debit_average"] = get_average_value(debits_transactions)
+
+        summary["monthly_summary"].append(tmp_monthly_summary)
 
     return summary
 
