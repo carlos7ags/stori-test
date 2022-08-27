@@ -1,5 +1,6 @@
 import boto3
 from smtplib import SMTP_SSL
+from aws_lambda_powertools.utilities import parameters
 
 from report_generator.report_generator import ReportGenerator
 
@@ -8,9 +9,9 @@ from report_generator.report_generator import ReportGenerator
 s3 = boto3.client('s3')
 
 # Create shared smtp client to send email
-smtp_ssl = SMTP_SSL(EMAIL_HOST)
+smtp_ssl = SMTP_SSL(parameters.get_secret("EMAIL_HOST"))
 smtp_ssl.starttls()
-smtp_ssl.login(EMAIL_USER, EMAIL_PASSWORD)
+smtp_ssl.login(parameters.get_secret("EMAIL_USER"), parameters.get_secret("EMAIL_PASSWORD"))
 
 # Report generator instance to process events
 report_generator = ReportGenerator(s3, smtp_ssl)
