@@ -54,7 +54,7 @@ def transform_csv_object_to_transactions(csv_object: Any) -> List[Transaction]:
     return list(map(transaction_parser, records))
 
 
-def prepare_html_email(context: Dict, template_path: str) -> str:
+def replace_template_literals(context: Dict, template_path: str) -> str:
     with open(template_path, "r") as file:
         html_email_report = file.read()
 
@@ -62,3 +62,12 @@ def prepare_html_email(context: Dict, template_path: str) -> str:
         html_email_report = html_email_report.replace("{{ %s }}" % tag, value)
 
     return html_email_report
+
+
+def get_transactions_html_report(context: Dict) -> str:
+    body = ""
+    for monthly_summary in context["monthly_summary"]:
+        body += replace_template_literals(monthly_summary, "templates/transactions_monthly_summary.html")
+
+    return replace_template_literals({"balance": context["balance"], "monthly_summary": body},
+                                     "templates/transactions_summary_report.html")
