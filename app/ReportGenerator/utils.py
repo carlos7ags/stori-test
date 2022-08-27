@@ -52,3 +52,13 @@ def transform_csv_object_to_transactions(csv_object: Any) -> List[Transaction]:
     records = csv.reader(data)
     next(records)
     return list(map(transaction_parser, records))
+
+
+def prepare_html_email(context: Dict, template_path: str) -> str:
+    with open(template_path, "r") as file:
+        html_email_report = file.read()
+
+    for tag, value in context.items():
+        html_email_report = html_email_report.replace("{{ %s }}" % tag, value)
+
+    return html_email_report
