@@ -1,7 +1,19 @@
-import ReportGenerator
+import boto3
+from smtplib import SMTP_SSL
+
+from report_generator.report_generator import ReportGenerator
 
 
-report_generator = ReportGenerator()
+# Create shared S3 client to get input
+s3 = boto3.client('s3')
+
+# Create shared smtp client to send email
+smtp_ssl = SMTP_SSL(EMAIL_HOST)
+smtp_ssl.starttls()
+smtp_ssl.login(EMAIL_USER, EMAIL_PASSWORD)
+
+# Report generator instance to process events
+report_generator = ReportGenerator(s3, smtp_ssl)
 
 
 def lambda_handler(event, context):
