@@ -1,7 +1,7 @@
 import csv
 from typing import List, Dict, Any
 
-from app.report_generator.transaction import Transaction
+from .transaction import Transaction
 
 
 def transaction_parser(transaction: str):

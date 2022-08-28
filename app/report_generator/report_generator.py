@@ -6,9 +6,9 @@ from botocore.client import BaseClient
 from smtplib import SMTP_SSL
 from typing import Any, Dict
 
-from app.report_generator.constants import EMAIL_FROM, EMAIL_TO, EMAIL_SUBJECT
-from app.report_generator.utils import transform_csv_object_to_transactions, get_transactions_html_report, \
-    get_transactions_summary
+from .constants import EMAIL_TO, EMAIL_FROM, EMAIL_SUBJECT
+from .utils import (transform_csv_object_to_transactions, get_transactions_html_report,
+                    get_transactions_summary)
 
 
 class ReportGenerator:
