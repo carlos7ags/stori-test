@@ -6,6 +6,18 @@ The application was deployed as a Docker image to AWS Lambda using GitHub Action
 
 The AWS Lambda service is triggered when uploading a file to a S3 bucket (more details in the usage section).
 
+## Interface
+
+The application was designed around a report generator. The report generator is executed calling the `generate_report` method. It uses three main internal methods:
+
+1. _get_data: defines the process to get the transactions file from S3
+2. __process_data: generates the summary of the transactions
+3. _send_report: renders the summary into the HTML files and sends the email to the user.
+
+If neccesary, it is possible to inject specific functions to this three methods to control the type of report, the source of the data or customize the action to send it to the user.
+
+Additionaly, we have the utils file where all of the static calculations are defined, including the email rendering functionality.
+
 ## Usage
 
 The application was deployed to AWS Lambda. To generate a report you should upload a valid `csv` transactions file to the following S3 bucket:
