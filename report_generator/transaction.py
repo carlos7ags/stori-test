@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+import datetime
 
 @dataclass
 class Transaction:
@@ -7,13 +7,11 @@ class Transaction:
 
     Attributes:
         id (int): The transaction id.
-        month (str): The month of occurrence of this transaction.
-        day (str): The day of month of this transaction.
+        date (datetime): The date of occurrence of this transaction.
         type (str): A categorical variable ("credit", "debit") signaling the transaction type.
         value (float): The economic value of the transaction.
     """
     id: int
-    month: str
-    day: str
+    date: datetime
     type: str
     value: float
