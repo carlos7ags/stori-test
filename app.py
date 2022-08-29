@@ -1,9 +1,9 @@
 import os
-import boto3
 from smtplib import SMTP
 
-from report_generator.report_generator import ReportGenerator
+import boto3
 
+from report_generator.report_generator import ReportGenerator
 
 # Create shared S3 client to get input
 s3 = boto3.client("s3")

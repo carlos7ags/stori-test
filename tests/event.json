@@ -27,7 +27,7 @@
           "arn": "arn:aws:s3:::stori-cmunoz-1"
         },
         "object": {
-          "key": "txn/transactions.csv",
+          "key": "txn/cmunoz@colmex.mx.csv",
           "size": 1024,
           "eTag": "120baaef1c1bde87e2b167866f41a4cf",
           "sequencer": "0A1B2C3D4E5F678901"
