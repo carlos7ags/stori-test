@@ -1,12 +1,12 @@
 import os
 import boto3
-from smtplib import SMTP_SSL
+from smtplib import SMTP
 
 from report_generator.report_generator import ReportGenerator
 
 
 # Create shared S3 client to get input
-s3 = boto3.client('s3')
+s3 = boto3.client("s3")
 
 # Create shared smtp client to send email
 smtp_ssl = SMTP_SSL(os.getenv("EMAIL_HOST"))

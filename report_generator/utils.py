@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 from typing import List, Dict, Any
 from datetime import datetime
 
@@ -28,10 +29,11 @@ def get_transactions_summary(transactions: List[Transaction]) -> Dict:
     summary = dict()
     summary["balance"] = "${:0,.2f}".format(get_total_balance(transactions))
     summary["monthly_summary"] = []
-    periods = sorted(list(set([txn.date.strftime("%B") for txn in transactions])), reverse=True)
+
+    periods = sorted(set([txn.date.replace(day=1) for txn in transactions]), reverse=True)
+    periods = map(lambda x: x.strftime("%B"), periods)
     for period in periods:
         period_transactions = list(filter(lambda x: x.date.strftime("%B") == period, transactions))
-
         tmp_monthly_summary = dict()
         tmp_monthly_summary["period"] = period
 
@@ -74,3 +76,8 @@ def get_transactions_html_report(context: Dict) -> str:
 
     return replace_template_literals({"balance": context["balance"], "monthly_summary": body},
                                      "report_generator/templates/transactions_summary_report.html")
+
+
+def is_valid_email(email: str):
+    regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+    return re.fullmatch(regex, email)
