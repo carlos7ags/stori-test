@@ -28,6 +28,7 @@ class ReportGenerator:
         csv_object = self.s3.get_object(Bucket=bucket, Key=key)
         return transform_csv_object_to_transactions(csv_object)
 
+    # ToDo: Inject data processor and data getter to handle different reports.
     def _process_data(self, data: Any) -> Dict:
         return get_transactions_summary(data)
 
