@@ -1,17 +1,18 @@
 import csv
+import os
 from typing import List, Dict, Any
+from datetime import datetime
 
 from .transaction import Transaction
 
 
 def transaction_parser(transaction: str):
-    txn = transaction.split(",")
+
     return Transaction(
-        id=int(txn[0]),
-        month=txn[1].split("/")[0],
-        day=txn[1].split("/")[1],
-        type="credit" if txn[2][0] == "+" else "debit",
-        value=float(txn[2][1:]),
+        id=int(transaction[0]),
+        date=datetime.strptime(transaction[1], "%m/%d"),
+        type="credit" if transaction[2][0] == "+" else "debit",
+        value=float(transaction[2][1:]),
     )
 
 
@@ -20,16 +21,16 @@ def get_average_value(transactions: List[Transaction]) -> float:
 
 
 def get_total_balance(transactions: List[Transaction]) -> float:
-    return sum([txn.value if "credit" else -txn.value for txn in transactions])
+    return sum([txn.value if txn.type == "credit" else -1 * txn.value for txn in transactions])
 
 
 def get_transactions_summary(transactions: List[Transaction]) -> Dict:
     summary = dict()
-    summary["balance"] = get_total_balance(transactions)
+    summary["balance"] = "${:0,.2f}".format(get_total_balance(transactions))
     summary["monthly_summary"] = []
-    periods = set([txn.month for txn in transactions])
+    periods = sorted(list(set([txn.date.strftime("%B") for txn in transactions])), reverse=True)
     for period in periods:
-        period_transactions = list(filter(lambda x: x.month == period, transactions))
+        period_transactions = list(filter(lambda x: x.date.strftime("%B") == period, transactions))
 
         tmp_monthly_summary = dict()
         tmp_monthly_summary["period"] = period
@@ -37,10 +38,10 @@ def get_transactions_summary(transactions: List[Transaction]) -> Dict:
         tmp_monthly_summary["transactions_count"] = len(period_transactions)
 
         credit_transactions = list(filter(lambda x: x.type == "credit", period_transactions))
-        tmp_monthly_summary["credit_average"] = get_average_value(credit_transactions)
+        tmp_monthly_summary["credit_average"] = "${:0,.2f}".format(get_average_value(credit_transactions))
 
         debits_transactions = list(filter(lambda x: x.type == "debit", period_transactions))
-        tmp_monthly_summary["debit_average"] = get_average_value(debits_transactions)
+        tmp_monthly_summary["debit_average"] = "${:0,.2f}".format(get_average_value(debits_transactions))
 
         summary["monthly_summary"].append(tmp_monthly_summary)
 
