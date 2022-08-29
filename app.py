@@ -9,7 +9,7 @@ from report_generator.report_generator import ReportGenerator
 s3 = boto3.client("s3")
 
 # Create shared smtp client to send email
-smtp_ssl = SMTP_SSL(os.getenv("EMAIL_HOST"))
+smtp_ssl = SMTP(os.getenv("EMAIL_HOST"), 587)
 smtp_ssl.starttls()
 smtp_ssl.login(os.getenv("EMAIL_USER"), os.getenv("EMAIL_PASSWORD"))
 
