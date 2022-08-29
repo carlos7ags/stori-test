@@ -1,15 +1,19 @@
 import re
 import urllib
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from botocore.client import BaseClient
 from smtplib import SMTP
 from typing import Any, Dict
 
+from botocore.client import BaseClient
+
 from .constants import DEFAULT_EMAIL_TO, EMAIL_FROM, EMAIL_SUBJECT
-from .utils import (transform_csv_object_to_transactions, get_transactions_html_report,
-                    get_transactions_summary, is_valid_email)
+from .utils import (
+    get_transactions_html_report,
+    get_transactions_summary,
+    is_valid_email,
+    transform_csv_object_to_transactions,
+)
 
 
 class ReportGenerator:
@@ -21,6 +25,7 @@ class ReportGenerator:
         s3_client (BaseClient): The Boto S3 client.
         smtp_client (SMTP): The SMTP client.
     """
+
     def __init__(self, s3_client: BaseClient, smtp_client: SMTP):
         self.s3 = s3_client
         self.smtp = smtp_client
@@ -32,7 +37,9 @@ class ReportGenerator:
 
     def _get_data(self, event: Any) -> Any:
         bucket = event["Records"][0]["s3"]["bucket"]["name"]
-        key = urllib.parse.unquote_plus(event["Records"][0]["s3"]["object"]["key"], encoding="utf-8")
+        key = urllib.parse.unquote_plus(
+            event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"
+        )
         csv_object = self.s3.get_object(Bucket=bucket, Key=key)
         return transform_csv_object_to_transactions(csv_object)
 
@@ -41,9 +48,15 @@ class ReportGenerator:
         return get_transactions_summary(data)
 
     def _send_report(self, event: Any, context: Dict):
-        key = urllib.parse.unquote_plus(event["Records"][0]["s3"]["object"]["key"], encoding="utf-8")
+        key = urllib.parse.unquote_plus(
+            event["Records"][0]["s3"]["object"]["key"], encoding="utf-8"
+        )
         user_provided_email = re.search(r"txn\/(.*).csv", key, re.IGNORECASE).group(1)
-        email_to = user_provided_email if is_valid_email(user_provided_email) else DEFAULT_EMAIL_TO
+        email_to = (
+            user_provided_email
+            if is_valid_email(user_provided_email)
+            else DEFAULT_EMAIL_TO
+        )
 
         body = get_transactions_html_report(context)
 
